@@ -1,3 +1,6 @@
+"TODO: Add partial search matches
+"TODO: Increase history
+
 "RESET VIM BEFORE CONFIGURING
 runtime defaults.vim
 
