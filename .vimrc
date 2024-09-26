@@ -1,6 +1,3 @@
-"TODO: Add partial search matches
-"TODO: Increase history
-
 "RESET VIM BEFORE CONFIGURING
 runtime defaults.vim
 
@@ -15,6 +12,13 @@ set number relativenumber
 set ruler
 set nowrap
 set showmatch
+
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set history=1000
+set spell
 
 " NETRW SETTINGS
 let g:netrw_banner = 0
