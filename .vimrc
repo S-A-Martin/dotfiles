@@ -24,6 +24,17 @@ set cursorline  " show the current line number
 set backspace=indent,eol,start  " allow 'natural' backspacing
 let g:netrw_banner = 0  " don't show the NETRW banner
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'  " enable line numbers in NETRW
+set path+=** " allow recursive searching from the cwd
+set wildmenu " enable the wild menu for tab completion
+set wildoptions=pum,fuzzy,tagfile
+set wildmode=longest:full,full
+
+" Remap hjkl keys in command-line mode for wildmenu navigation
+cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<C-j>"
+cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<C-k>"
+cnoremap <expr> <C-h> wildmenumode() ? "\<Left>" : "\<C-h>"
+cnoremap <expr> <C-l> wildmenumode() ? "\<Right>" : "\<C-l>"
+
 
 " disable arrow keys
 noremap <Left>  <nop>
@@ -34,3 +45,25 @@ inoremap <Left>  <nop>
 inoremap <Down>  <nop>
 inoremap <Up> 	 <nop>
 inoremap <Right> <nop>
+
+"function! RG(args) abort
+"    let l:tempname = tempname()
+"    let l:pattern = '.'
+"    if len(a:args) > 0
+"        let l:pattern = a:args
+"    endif
+"    " rg --vimgrep <pattern> | fzf -m > file
+"    execute 'silent !rg --vimgrep ''' . l:pattern . ''' | fzf -m > ' . fnameescape(l:tempname)
+"    try
+"        execute 'cfile ' . l:tempname
+"        redraw!
+"    finally
+"        call delete(l:tempname)
+"    endtry
+"endfunction
+"
+"" :Rg [pattern]
+"command! -nargs=* Rg call RG(<q-args>)
+"
+"" \fs
+"nnoremap <leader>fs :Rg<cr>
