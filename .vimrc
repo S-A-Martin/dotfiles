@@ -25,6 +25,7 @@ set backspace=indent,eol,start  " allow 'natural' backspacing
 let g:netrw_banner = 0  " don't show the NETRW banner
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'  " enable line numbers in NETRW
 set path+=** " allow recursive searching from the cwd
+set path+=/c/msys64/ucrt64/include/**3
 set wildmenu " enable the wild menu for tab completion
 set wildoptions=pum,fuzzy,tagfile
 set wildmode=longest:full,full
