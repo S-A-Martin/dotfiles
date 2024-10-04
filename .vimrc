@@ -13,7 +13,8 @@ set ruler " always show current line/char
 set nowrap  " do not wrap lines
 set showmatch " show matching brackets
 set laststatus=2  " always show the status line
-set tags=tags;/ " look for tags file in the current directory then upwards
+set tags=./tags;,/tags;,~/.vim/system/tags
+set notagrelative
 set hlsearch  " highlight search matches
 set incsearch " enable incremental searching
 set ignorecase  " case insensitive searching
@@ -26,18 +27,17 @@ set backspace=indent,eol,start  " allow 'natural' backspacing
 let g:netrw_banner = 0  " don't show the NETRW banner
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'  " enable line numbers in NETRW
 set path+=** " allow recursive searching from the cwd
-set path+=/c/msys64/ucrt64/include/**3
+"set path+=/c/msys64/ucrt64/include/**3
 set wildmenu " enable the wild menu for tab completion
 set wildoptions=pum,fuzzy,tagfile
 set wildmode=longest:full,full
 set hidden
-
 " Remap hjkl keys in command-line mode for wildmenu navigation
 cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<C-j>"
 cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<C-k>"
 cnoremap <expr> <C-h> wildmenumode() ? "\<Left>" : "\<C-h>"
 cnoremap <expr> <C-l> wildmenumode() ? "\<Right>" : "\<C-l>"
-
+nnoremap , <C-]>
 
 " disable arrow keys
 noremap <Left>  <nop>
