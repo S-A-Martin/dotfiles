@@ -47,24 +47,28 @@ inoremap <Down>  <nop>
 inoremap <Up> 	 <nop>
 inoremap <Right> <nop>
 
-"function! RG(args) abort
-"    let l:tempname = tempname()
-"    let l:pattern = '.'
-"    if len(a:args) > 0
-"        let l:pattern = a:args
-"    endif
-"    " rg --vimgrep <pattern> | fzf -m > file
-"    execute 'silent !rg --vimgrep ''' . l:pattern . ''' | fzf -m > ' . fnameescape(l:tempname)
-"    try
-"        execute 'cfile ' . l:tempname
-"        redraw!
-"    finally
-"        call delete(l:tempname)
-"    endtry
-"endfunction
-"
-"" :Rg [pattern]
-"command! -nargs=* Rg call RG(<q-args>)
-"
-"" \fs
-"nnoremap <leader>fs :Rg<cr>
+
+if executable('rg')
+  set grepprg=rg\ --vimgrep
+  set grepformat^=%f:%l:%c:%m
+endif
+
+function! Files()
+    " Check if fzf is installed
+    if executable('fzf')
+        " Get the current working directory in Vim
+        let l:cwd = getcwd()
+        " Use find to list files and pipe to fzf
+        let l:selection = system('find ' . l:cwd . ' -type f | fzf')
+        " Check if the selection is not empty
+        if v:shell_error == 0 && !empty(l:selection)
+            execute 'edit' l:selection
+        else
+           execute 'redraw!'
+        endif
+    else
+        echo "fzf is not installed. Please install fzf to use this command."
+    endif
+endfunction
+
+command! Files call Files()
