@@ -4,6 +4,7 @@ syntax on   " syntax highlighting
 colorscheme retrobox   " vim theme
 set background=dark   " use the theme's dark mode
 highlight Normal ctermbg=black   " make the windows background black
+set nocompatible
 set autoindent   " enable auto-indentation
 set tabstop=2 shiftwidth=2 expandtab   " tab width 2 spaces, indentation width 2 spaces, convert tabs to spaces
 set number    " enable line numbers
