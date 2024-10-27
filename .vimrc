@@ -51,7 +51,7 @@ inoremap <Right> <nop>
 
 
 if executable('rg')
-  set grepprg=rg\ --vimgrep
+  set grepprg=rg\ --vimgrep --smart-case --follow
   set grepformat^=%f:%l:%c:%m
 endif
 
