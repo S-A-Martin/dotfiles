@@ -30,6 +30,7 @@ set path+=/c/msys64/ucrt64/include/**3
 set wildmenu " enable the wild menu for tab completion
 set wildoptions=pum,fuzzy,tagfile
 set wildmode=longest:full,full
+set hidden
 
 " Remap hjkl keys in command-line mode for wildmenu navigation
 cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<C-j>"
