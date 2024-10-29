@@ -51,7 +51,7 @@ inoremap <Right> <nop>
 
 
 if executable('rg')
-  set grepprg=rg\ --vimgrep --smart-case --follow
+  set grepprg="rg\ --vimgrep --smart-case --follow"
   set grepformat^=%f:%l:%c:%m
 endif
 
@@ -74,3 +74,29 @@ function! Files()
 endfunction
 
 command! Files call Files()
+
+
+function! EnsureUndoDirExists()
+    let undo_dir = expand("~/.vim/undo_dir")
+    if !isdirectory(undo_dir)
+        call mkdir(undo_dir, "p")
+    endif
+endfunction
+
+function! EnsureSystemDirExists()
+    let system_dir = expand("~/.vim/system_dir")
+    if !isdirectory(system_dir)
+        call mkdir(system_dir, "p")
+    endif
+endfunction
+
+
+
+
+
+
+set undodir=~/.vim/undo_dir
+set undofile
+
+autocmd VimEnter * call EnsureUndoDirExists()
+autocmd VimEnter * call EnsureSystemDirExists()
