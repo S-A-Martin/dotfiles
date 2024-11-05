@@ -37,17 +37,16 @@ cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<C-j>"
 cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<C-k>"
 cnoremap <expr> <C-h> wildmenumode() ? "\<Left>" : "\<C-h>"
 cnoremap <expr> <C-l> wildmenumode() ? "\<Right>" : "\<C-l>"
-nnoremap , <C-]>
 
 " disable arrow keys
 noremap <Left>  <nop>
 noremap <Down>  <nop>
 noremap <Up> 	<nop>
 noremap <Right> <nop>
-inoremap <Left>  <nop>
-inoremap <Down>  <nop>
-inoremap <Up> 	 <nop>
-inoremap <Right> <nop>
+"inoremap <Left>  <nop>
+"inoremap <Down>  <nop>
+"inoremap <Up> 	 <nop>
+"inoremap <Right> <nop>
 
 
 if executable('rg')
