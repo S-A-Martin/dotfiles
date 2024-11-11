@@ -60,7 +60,11 @@ function! Files()
         " Get the current working directory in Vim
         let l:cwd = getcwd()
         " Use find to list files and pipe to fzf
-        let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview="cat {}"')
+        if executable('bat')
+          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview="bat --color=always {}"')
+        else
+          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview="cat {}"')
+        endif 
         " Check if the selection is not empty
         if v:shell_error == 0 && !empty(l:selection)
             execute 'edit' l:selection
