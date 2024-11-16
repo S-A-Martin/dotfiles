@@ -5,13 +5,11 @@ colorscheme retrobox   " vim theme
 set background=dark   " use the theme's dark mode
 highlight Normal ctermbg=black   " make the windows background black
 set nocompatible
-set autoindent   " enable auto-indentation
-set tabstop=2 shiftwidth=2 expandtab   " tab width 2 spaces, indentation width 2 spaces, convert tabs to spaces
-set number    " enable line numbers
-set relativenumber  " enable relative numbers
+set autoindent tabstop=2 shiftwidth=2 expandtab   " tab width 2 spaces, indentation width 2 spaces, convert tabs to spaces
+set number relativenumber  " enable relative numbers
 set ruler " always show current line/char
-set nowrap  " do not wrap lines
-set showmatch " show matching brackets
+"set nowrap  " do not wrap lines
+"set showmatch " show matching brackets
 set laststatus=2  " always show the status line
 set tags=./tags;,/tags;,~/.vim/system/tags
 set notagrelative
@@ -32,6 +30,8 @@ set wildmenu " enable the wild menu for tab completion
 set wildoptions=pum,fuzzy,tagfile
 set wildmode=longest:full,full
 set hidden
+set nrformats+=alpha
+
 " Remap hjkl keys in command-line mode for wildmenu navigation
 cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<C-j>"
 cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<C-k>"
