@@ -8,7 +8,7 @@ set nocompatible
 set autoindent tabstop=2 shiftwidth=2 expandtab   " tab width 2 spaces, indentation width 2 spaces, convert tabs to spaces
 set number relativenumber  " enable relative numbers
 set ruler " always show current line/char
-"set nowrap  " do not wrap lines
+set nowrap  " do not wrap lines
 "set showmatch " show matching brackets
 set laststatus=2  " always show the status line
 set tags=./tags;,/tags;,~/.vim/system/tags
@@ -32,12 +32,21 @@ set wildmode=longest:full,full
 set wildignore+=*node_modules*,*.ctags,.git/**,tags,cscope*
 set hidden
 set nrformats+=alpha
+"nnoremap n nzz " Keep searches centralised
+"nnoremap N Nzz " Keep searches centralised
+"nnoremap * *zz " Keep searches centralised
+"nnoremap # #zz " Keep searches centralised
+"nnoremap g* g*zz " Keep searches centralised
+"nnoremap g# g#zz " Keep searches centralised
 
 " Remap hjkl keys in command-line mode for wildmenu navigation
 cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<C-j>"
 cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<C-k>"
 cnoremap <expr> <C-h> wildmenumode() ? "\<Left>" : "\<C-h>"
 cnoremap <expr> <C-l> wildmenumode() ? "\<Right>" : "\<C-l>"
+
+nnoremap <Leader>t :terminal ++curwin ++kill=hup<CR>
+noremap <Leader>T :tab terminal ++kill=hup<CR>
 
 " Edit vimr configuration file
 nnoremap <Leader>ve :e $MYVIMRC<CR>
@@ -67,7 +76,7 @@ function! Files()
         let l:cwd = getcwd()
         " Use find to list files and pipe to fzf
         if executable('bat')
-          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview="bat {}"')
+          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview" --preview="bat {}"')
         else
           let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview="cat {}"')
         endif 
