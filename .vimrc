@@ -29,6 +29,7 @@ set path+=** " allow recursive searching from the cwd
 set wildmenu " enable the wild menu for tab completion
 set wildoptions=pum,fuzzy,tagfile
 set wildmode=longest:full,full
+set wildignore+=*node_modules*,*.ctags,.git/**,tags,cscope*
 set hidden
 set nrformats+=alpha
 
@@ -37,6 +38,11 @@ cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<C-j>"
 cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<C-k>"
 cnoremap <expr> <C-h> wildmenumode() ? "\<Left>" : "\<C-h>"
 cnoremap <expr> <C-l> wildmenumode() ? "\<Right>" : "\<C-l>"
+
+" Edit vimr configuration file
+nnoremap <Leader>ve :e $MYVIMRC<CR>
+" " Reload vimr configuration file
+nnoremap <Leader>vr :source $MYVIMRC<CR>
 
 " disable arrow keys
 noremap <Left>  <nop>
@@ -50,7 +56,7 @@ noremap <Right> <nop>
 
 
 if executable('rg')
-  set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+  set grepprg=rg\ --vimgrep\ --smart-case\ --follow\ --glob\ '!*.tags,!**/node_modules/**'
   set grepformat^=%f:%l:%c:%m
 endif
 
@@ -61,7 +67,7 @@ function! Files()
         let l:cwd = getcwd()
         " Use find to list files and pipe to fzf
         if executable('bat')
-          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview="bat --color=always {}"')
+          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview="bat {}"')
         else
           let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview="cat {}"')
         endif 
@@ -103,3 +109,4 @@ set undofile
 
 autocmd VimEnter * call EnsureUndoDirExists()
 autocmd VimEnter * call EnsureSystemDirExists()
+
