@@ -5,6 +5,10 @@ colorscheme retrobox   " vim theme
 set background=dark   " use the theme's dark mode
 highlight Normal ctermbg=black   " make the windows background black
 set nocompatible
+
+nnoremap <SPACE> <Nop>
+let mapleader = " "
+
 set autoindent tabstop=2 shiftwidth=2 expandtab   " tab width 2 spaces, indentation width 2 spaces, convert tabs to spaces
 set number relativenumber  " enable relative numbers
 set ruler " always show current line/char
@@ -45,13 +49,22 @@ cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<C-k>"
 cnoremap <expr> <C-h> wildmenumode() ? "\<Left>" : "\<C-h>"
 cnoremap <expr> <C-l> wildmenumode() ? "\<Right>" : "\<C-l>"
 
-nnoremap <Leader>t :terminal ++curwin ++kill=hup<CR>
-noremap <Leader>T :tab terminal ++kill=hup<CR>
+
+nnoremap <Leader>t :term<CR>| " open terminal 
+nnoremap <Leader>T :terminal ++curwin ++kill=hup<CR>| " open terminal in current window
+noremap <Leader>TT :tab terminal ++kill=hup<CR>| " open terminal in new tab
+
+noremap <leader>f :grep<Space>| " grep shortcut
+nnoremap <leader>F :Files<CR>| " open fzf file search
+
+tnoremap <leader>gT <C-\><C-n>gT| "next tab in terminal
+tnoremap <leader>gt <C-\><C-n>gt| "previous tab in terminal
+
 
 " Edit vimr configuration file
-nnoremap <Leader>ve :e $MYVIMRC<CR>
+nnoremap <Leader>ve :e $MYVIMRC<CR>| " Edit vimr configuration file
 " " Reload vimr configuration file
-nnoremap <Leader>vr :source $MYVIMRC<CR>
+nnoremap <Leader>vr :source $MYVIMRC<CR>| " Reload vimr configuration file
 
 " disable arrow keys
 noremap <Left>  <nop>
@@ -62,10 +75,14 @@ noremap <Right> <nop>
 "inoremap <Down>  <nop>
 "inoremap <Up> 	 <nop>
 "inoremap <Right> <nop>
-
+ 
+nnoremap <Leader>k :copen<CR>| " open quickfix window
+nnoremap <Leader>j :ccl<CR>| " close quickfix window
+nnoremap <Leader>l :cn<CR>| " next quickfix item
+nnoremap <Leader>h :cp<CR>| " previous quickfix item
 
 if executable('rg')
-  set grepprg=rg\ --vimgrep\ --smart-case\ --follow\ --glob\ '!*.tags,!**/node_modules/**'
+  set grepprg=rg\ --vimgrep\ --smart-case\ --follow
   set grepformat^=%f:%l:%c:%m
 endif
 
