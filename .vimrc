@@ -1,6 +1,6 @@
 " ========================================
-" = Vim Configuration File
-" = Author: Steven Martin
+" Vim Configuration File
+" Author: Steven Martin
 " ========================================
 
 
@@ -38,7 +38,7 @@ set hlsearch  " highlight search matches
 set incsearch " enable incremental searching
 set ignorecase  " case insensitive searching
 set smartcase     " unless the search contains a capital letter
-
+nnoremap <Esc> :noh<CR>| " Clear search highlighting 
 
 " === INDENTATION AND TABS ===
 
@@ -46,7 +46,7 @@ set autoindent
 set tabstop=2 " width of tab character
 set shiftwidth=2 " width of indent
 set expandtab   " use spaces instead of tabs
-
+set smartindent
 
 " === FILE NAVIGATION AND COMPLETION ===
 
@@ -73,8 +73,11 @@ set undofile " use an undo file
 " === GENERIC EDITOR SETTINGS ===
 
 set backspace=indent,eol,start  " allow 'natural' backspacing
+set autoread " reload files if they are changed externally to vim
 set hidden " persist unsaved changes
 set nrformats+=alpha " allow incrementing characters as well
+set complete+=kspell " enable dictionary completion
+set spelllang=en_uk " set spell check lang
 
 
 " === NETRW SETTINGS ====
