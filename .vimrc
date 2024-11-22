@@ -1,47 +1,89 @@
-runtime macros/matchit.vim  " enable vim's built in bracket matching plugin
-filetype plugin indent on   " enable filetype dependent plugins and indentation
+" ========================================
+" = Vim Configuration File
+" = Author: Steven Martin
+" ========================================
+
+
+" === CORE SETTINGS === 
+
+set nocompatible " use vim settings rather than vi settings
+filetype plugin indent on   " enable filetype detection, plugins and indentation
 syntax on   " syntax highlighting
-colorscheme retrobox   " vim theme
-set background=dark   " use the theme's dark mode
-highlight Normal ctermbg=black   " make the windows background black
-set nocompatible
+runtime macros/matchit.vim  " enable vim's built in bracket matching plugin
 
-nnoremap <SPACE> <Nop>
-let mapleader = " "
 
-set autoindent tabstop=2 shiftwidth=2 expandtab   " tab width 2 spaces, indentation width 2 spaces, convert tabs to spaces
+" === LEADER KEY CONFIG ===
+
+nnoremap <SPACE> <Nop>| " prevent space being used
+let mapleader = " "| " space as leader
+
+
+" === VISUAL SETTINGS ===
+
+colorscheme retrobox   " set colour scheme
+set background=dark   " use dark mode
+highlight Normal ctermbg=black   " set black background
+highlight CursorLineNr ctermfg=214 ctermbg=NONE " colour the current line number
+highlight CursorLine cterm=NONE ctermbg=NONE  " no background on the current line number
+set cursorline  " show the current line number 
 set number relativenumber  " enable relative numbers
 set ruler " always show current line/char
 set nowrap  " do not wrap lines
-"set showmatch " show matching brackets
 set laststatus=2  " always show the status line
-set tags=./tags;,/tags;,~/.vim/system/tags
-set notagrelative
+
+
+" === SEARCH SETTINGS === 
+
 set hlsearch  " highlight search matches
 set incsearch " enable incremental searching
 set ignorecase  " case insensitive searching
 set smartcase     " unless the search contains a capital letter
-set history=1000  " keep 1000 commands in history
-highlight CursorLineNr ctermfg=214 ctermbg=NONE " colour the current line number
-highlight CursorLine cterm=NONE ctermbg=NONE  " no background on the current line number
-set cursorline  " show the current line number 
-set backspace=indent,eol,start  " allow 'natural' backspacing
-let g:netrw_banner = 0  " don't show the NETRW banner
-let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'  " enable line numbers in NETRW
+
+
+" === INDENTATION AND TABS ===
+
+set autoindent 
+set tabstop=2 " width of tab character
+set shiftwidth=2 " width of indent
+set expandtab   " use spaces instead of tabs
+
+
+" === FILE NAVIGATION AND COMPLETION ===
+
 set path+=** " allow recursive searching from the cwd
-"set path+=/c/msys64/ucrt64/include/**3
 set wildmenu " enable the wild menu for tab completion
 set wildoptions=pum,fuzzy,tagfile
 set wildmode=longest:full,full
 set wildignore+=*node_modules*,*.ctags,.git/**,tags,cscope*
-set hidden
-set nrformats+=alpha
-"nnoremap n nzz " Keep searches centralised
-"nnoremap N Nzz " Keep searches centralised
-"nnoremap * *zz " Keep searches centralised
-"nnoremap # #zz " Keep searches centralised
-"nnoremap g* g*zz " Keep searches centralised
-"nnoremap g# g#zz " Keep searches centralised
+
+
+" === TAGS CONFIGURATION ===
+
+set tags=./tags;,/tags;,~/.vim/system/tags
+set notagrelative
+
+
+" === HISTORY AND UNDO SETTINGS ===
+
+set history=1000  " keep 1000 commands in history
+set undodir=~/.vim/undo_dir " set the undo dir
+set undofile " use an undo file
+
+
+" === GENERIC EDITOR SETTINGS ===
+
+set backspace=indent,eol,start  " allow 'natural' backspacing
+set hidden " persist unsaved changes
+set nrformats+=alpha " allow incrementing characters as well
+
+
+" === NETRW SETTINGS ====
+
+let g:netrw_banner = 0  " don't show the NETRW banner
+let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'  " enable line numbers in NETRW
+
+
+" === CUSTOM KEY MAPPINGS ===
 
 " Remap hjkl keys in command-line mode for wildmenu navigation
 cnoremap <expr> <C-j> wildmenumode() ? "\<C-n>" : "\<C-j>"
@@ -49,24 +91,23 @@ cnoremap <expr> <C-k> wildmenumode() ? "\<C-p>" : "\<C-k>"
 cnoremap <expr> <C-h> wildmenumode() ? "\<Left>" : "\<C-h>"
 cnoremap <expr> <C-l> wildmenumode() ? "\<Right>" : "\<C-l>"
 
-
+" Terminal Mappings 
 nnoremap <Leader>t :term<CR>| " open terminal 
 nnoremap <Leader>T :terminal ++curwin ++kill=hup<CR>| " open terminal in current window
 noremap <Leader>TT :tab terminal ++kill=hup<CR>| " open terminal in new tab
-
-noremap <leader>f :grep<Space>| " grep shortcut
-nnoremap <leader>F :Files<CR>| " open fzf file search
-
 tnoremap <leader>gT <C-\><C-n>gT| "next tab in terminal
 tnoremap <leader>gt <C-\><C-n>gt| "previous tab in terminal
 
+" Search and Navigation Mappings
+noremap <leader>f :grep<Space>| " grep shortcut
+nnoremap <leader>F :Files<CR>| " open fzf filesearch
 
-" Edit vimr configuration file
+
+" Configuration File Editing
 nnoremap <Leader>ve :e $MYVIMRC<CR>| " Edit vimr configuration file
-" " Reload vimr configuration file
 nnoremap <Leader>vr :source $MYVIMRC<CR>| " Reload vimr configuration file
 
-" disable arrow keys
+" Disable Arrow Keys In Normal Mode
 noremap <Left>  <nop>
 noremap <Down>  <nop>
 noremap <Up> 	<nop>
@@ -75,17 +116,26 @@ noremap <Right> <nop>
 "inoremap <Down>  <nop>
 "inoremap <Up> 	 <nop>
 "inoremap <Right> <nop>
- 
-nnoremap <Leader>k :copen<CR>| " open quickfix window
-nnoremap <Leader>j :ccl<CR>| " close quickfix window
-nnoremap <Leader>l :cn<CR>| " next quickfix item
-nnoremap <Leader>h :cp<CR>| " previous quickfix item
 
+" Quickfix Window Mappings
+nnoremap <Leader>k :copen<CR>| " open quickfix window
+nnoremap <Leader>j :cclose<CR>| " close quickfix window
+nnoremap <Leader>l :cnext<CR>| " next quickfix item
+nnoremap <Leader>h :cprev<CR>| " previous quickfix item
+
+
+" === EXTERNAL TOOL INTEGRATION ===
+
+" Configure RipGrep
 if executable('rg')
   set grepprg=rg\ --vimgrep\ --smart-case\ --follow
   set grepformat^=%f:%l:%c:%m
 endif
 
+
+" === CUSTOM FUNCTIONS ===
+
+" FZF File Search
 function! Files()
     " Check if fzf is installed
     if executable('fzf')
@@ -110,7 +160,7 @@ endfunction
 
 command! Files call Files()
 
-
+" Directory Creation Functions
 function! EnsureUndoDirExists()
     let undo_dir = expand("~/.vim/undo_dir")
     if !isdirectory(undo_dir)
@@ -126,12 +176,7 @@ function! EnsureSystemDirExists()
 endfunction
 
 
-
-
-
-
-set undodir=~/.vim/undo_dir
-set undofile
+" === AUTOCOMMANDS
 
 autocmd VimEnter * call EnsureUndoDirExists()
 autocmd VimEnter * call EnsureSystemDirExists()
