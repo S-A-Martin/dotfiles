@@ -30,7 +30,8 @@ set number relativenumber  " enable relative numbers
 set ruler " always show current line/char
 set nowrap  " do not wrap lines
 set laststatus=2  " always show the status line
-
+set splitbelow          " horizontal splits open below
+set splitright          " vertical 
 
 " === SEARCH SETTINGS === 
 
@@ -77,7 +78,7 @@ set autoread " reload files if they are changed externally to vim
 set hidden " persist unsaved changes
 set nrformats+=alpha " allow incrementing characters as well
 set complete+=kspell " enable dictionary completion
-set spelllang=en_uk " set spell check lang
+set spelllang=en_gb " set spell check lang
 
 
 " === NETRW SETTINGS ====
@@ -104,6 +105,10 @@ tnoremap <leader>gt <C-\><C-n>gt| "previous tab in terminal
 " Search and Navigation Mappings
 noremap <leader>f :grep<Space>| " grep shortcut
 nnoremap <leader>F :Files<CR>| " open fzf filesearch
+
+
+" Quick Buffer Searching
+nnoremap <Leader>b :ls<CR>:buffer<Space>
 
 
 " Configuration File Editing
@@ -183,4 +188,7 @@ endfunction
 
 autocmd VimEnter * call EnsureUndoDirExists()
 autocmd VimEnter * call EnsureSystemDirExists()
+
+
+this is a test to see what haooens whem i type
 
