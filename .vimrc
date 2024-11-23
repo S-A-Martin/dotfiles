@@ -32,6 +32,7 @@ set nowrap  " do not wrap lines
 set laststatus=2  " always show the status line
 set splitbelow          " horizontal splits open below
 set splitright          " vertical 
+set showcmd 
 
 " === SEARCH SETTINGS === 
 
@@ -106,14 +107,16 @@ tnoremap <leader>gt <C-\><C-n>gt| "previous tab in terminal
 noremap <leader>f :grep<Space>| " grep shortcut
 nnoremap <leader>F :Files<CR>| " open fzf filesearch
 
-
 " Quick Buffer Searching
 nnoremap <Leader>b :ls<CR>:buffer<Space>
-
 
 " Configuration File Editing
 nnoremap <Leader>ve :e $MYVIMRC<CR>| " Edit vimr configuration file
 nnoremap <Leader>vr :source $MYVIMRC<CR>| " Reload vimr configuration file
+
+" Spellcheck Settings
+nnoremap <Leader>z :set spell<CR>| " enable spellcheck
+nnoremap <Leader>Z :set nospell<CR>| " disable spellcheck
 
 " Disable Arrow Keys In Normal Mode
 noremap <Left>  <nop>
@@ -188,7 +191,4 @@ endfunction
 
 autocmd VimEnter * call EnsureUndoDirExists()
 autocmd VimEnter * call EnsureSystemDirExists()
-
-
-this is a test to see what haooens whem i type
 
