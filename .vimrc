@@ -24,7 +24,7 @@ colorscheme retrobox   " set colour scheme
 set background=dark   " use dark mode
 highlight Normal ctermbg=black   " set black background
 highlight CursorLineNr ctermfg=214 ctermbg=NONE " colour the current line number
-highlight CursorLine cterm=NONE ctermbg=NONE  " no background on the current line number
+highlight CursorLine cterm=NONE ctermbg=233 " no background on the current line number
 set cursorline  " show the current line number 
 set number relativenumber  " enable relative numbers
 set ruler " always show current line/char
@@ -37,6 +37,7 @@ set showcmd
 " === SEARCH SETTINGS === 
 
 set hlsearch  " highlight search matches
+let @/ = "" " clear search when sourcing vimrc
 set incsearch " enable incremental searching
 set ignorecase  " case insensitive searching
 set smartcase     " unless the search contains a capital letter
