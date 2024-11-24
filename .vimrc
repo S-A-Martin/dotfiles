@@ -157,7 +157,7 @@ function! Files()
         if executable('bat')
           let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview" --preview="bat {}"')
         else
-          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview="cat {}"')
+					let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview" --preview="cat {}"')
         endif 
         " Check if the selection is not empty
         if v:shell_error == 0 && !empty(l:selection)
