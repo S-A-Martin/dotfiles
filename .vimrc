@@ -81,7 +81,12 @@ set hidden " persist unsaved changes
 set nrformats+=alpha " allow incrementing characters as well
 set complete+=kspell " enable dictionary completion
 set spelllang=en_gb " set spell check lang
-
+set noswapfile " disable swap files
+set lazyredraw
+set ttyfast " speed up terminal redraws
+set updatetime=300          " Faster completion
+set timeoutlen=500          " Faster key combos
+set encoding=utf-8 " set encoding to utf-8
 
 " === NETRW SETTINGS ====
 
@@ -98,7 +103,7 @@ cnoremap <expr> <C-h> wildmenumode() ? "\<Left>" : "\<C-h>"
 cnoremap <expr> <C-l> wildmenumode() ? "\<Right>" : "\<C-l>"
 
 " Terminal Mappings 
-nnoremap <Leader>t :term<CR>| " open terminal 
+nnoremap <Leader>t :terminal ++kill=hup<CR>| " open terminal 
 nnoremap <Leader>T :terminal ++curwin ++kill=hup<CR>| " open terminal in current window
 noremap <Leader>TT :tab terminal ++kill=hup<CR>| " open terminal in new tab
 tnoremap <leader>gT <C-\><C-n>gT| "next tab in terminal
@@ -112,8 +117,8 @@ nnoremap <leader>F :Files<CR>| " open fzf filesearch
 nnoremap <Leader>b :ls<CR>:buffer<Space>
 
 " Configuration File Editing
-nnoremap <Leader>ve :e $MYVIMRC<CR>| " Edit vimr configuration file
-nnoremap <Leader>vr :source $MYVIMRC<CR>| " Reload vimr configuration file
+nnoremap <Leader>ev :e $MYVIMRC<CR>| " Edit vimr configuration file
+nnoremap <Leader>sv :source $MYVIMRC<CR>| " Reload vimr configuration file
 
 " Spellcheck Settings
 nnoremap <Leader>z :set spell<CR>| " enable spellcheck
@@ -140,7 +145,7 @@ nnoremap <Leader>h :cprev<CR>| " previous quickfix item
 
 " Configure RipGrep
 if executable('rg')
-  set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+  set grepprg=rg\ --vimgrep\ --smart-case\ --follow\ --glob=!tags
   set grepformat^=%f:%l:%c:%m
 endif
 
