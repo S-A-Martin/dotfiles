@@ -160,9 +160,9 @@ function! Files()
         let l:cwd = getcwd()
         " Use find to list files and pipe to fzf
         if executable('bat')
-          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview" --preview="bat {}"')
+          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview,j:down,k:up,ctrl-j:preview-down,ctrl-k:preview-up" --preview="bat --color always {}"')
         else
-					let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview" --preview="cat {}"')
+					let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview,,j:down,k:up,ctrl-j:preview-down,ctrl-k:preview-up" --preview="cat {}"')
         endif 
         " Check if the selection is not empty
         if v:shell_error == 0 && !empty(l:selection)
