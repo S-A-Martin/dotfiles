@@ -112,6 +112,7 @@ tnoremap <leader>gt <C-\><C-n>gt| "previous tab in terminal
 " Search and Navigation Mappings
 noremap <leader>f :grep<Space>| " grep shortcut
 nnoremap <leader>F :Files<CR>| " open fzf filesearch
+nnoremap <leader>gc :Checkout<CR>| " fuzzy checkout branch
 
 " Quick Buffer Searching
 nnoremap <Leader>b :ls<CR>:buffer<Space>
@@ -141,7 +142,7 @@ nnoremap <Leader>l :cnext<CR>| " next quickfix item
 nnoremap <Leader>h :cprev<CR>| " previous quickfix item
 
 
-" === EXTERNAL TOOL INTEGRATION ===
+"=== EXTERNAL TOOL INTEGRATION ===
 
 " Configure RipGrep
 if executable('rg')
@@ -167,15 +168,40 @@ function! Files()
         " Check if the selection is not empty
         if v:shell_error == 0 && !empty(l:selection)
             execute 'edit' l:selection
-        else
-           execute 'redraw!'
         endif
     else
         echo "fzf is not installed. Please install fzf to use this command."
     endif
+    execute 'redraw!'
 endfunction
 
 command! Files call Files()
+
+" Fuzzy Branch Checkout
+function! Checkout(...)
+  " Check the number of arguments
+  if a:0 > 0
+    " Use the first argument as the query
+    let branch = system('git branch | fzf -q ' . a:1)
+  else
+    let branch = system('git branch | fzf')
+  endif
+
+  " Check if a branch was selected
+  if !empty(branch)
+    " Remove any leading/trailing whitespace
+    let branch = trim(branch)
+    " Checkout the selected branch
+    let result = system('git checkout ' . branch)
+    echo 'Checked out branch: ' . branch
+  else
+    echo 'No branch selected.'
+  endif
+execute 'redraw!'
+endfunction
+
+" Map the function to a command with variable arguments
+command! -nargs=* Checkout call Checkout(<f-args>)
 
 " Directory Creation Functions
 function! EnsureUndoDirExists()
