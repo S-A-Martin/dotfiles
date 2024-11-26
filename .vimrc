@@ -75,6 +75,7 @@ set undofile " use an undo file
 
 " === GENERIC EDITOR SETTINGS ===
 
+set textwidth=0 " for the love of god, i'll decide my line lengths
 set backspace=indent,eol,start  " allow 'natural' backspacing
 set autoread " reload files if they are changed externally to vim
 set hidden " persist unsaved changes
@@ -82,7 +83,6 @@ set nrformats+=alpha " allow incrementing characters as well
 set complete+=kspell " enable dictionary completion
 set spelllang=en_gb " set spell check lang
 set noswapfile " disable swap files
-set lazyredraw
 set ttyfast " speed up terminal redraws
 set updatetime=300          " Faster completion
 set timeoutlen=500          " Faster key combos
@@ -161,9 +161,9 @@ function! Files()
         let l:cwd = getcwd()
         " Use find to list files and pipe to fzf
         if executable('bat')
-          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview,j:down,k:up,ctrl-j:preview-down,ctrl-k:preview-up" --preview="bat --color always {}"')
+          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview,ctrl-j:down,ctrl-k:up,alt-j:preview-down,alt-k:preview-up" --preview="bat --color always {}"')
         else
-					let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview,,j:down,k:up,ctrl-j:preview-down,ctrl-k:preview-up" --preview="cat {}"')
+          let l:selection = system('find ' . l:cwd . ' -type f | fzf --preview-window "hidden" --bind="F2:toggle-preview,ctrl-j:down,ctrl-k:up,alt-j:preview-down,alt-k:preview-up" --preview="cat {}"')
         endif 
         " Check if the selection is not empty
         if v:shell_error == 0 && !empty(l:selection)
@@ -172,7 +172,6 @@ function! Files()
     else
         echo "fzf is not installed. Please install fzf to use this command."
     endif
-    execute 'redraw!'
 endfunction
 
 command! Files call Files()
@@ -197,7 +196,6 @@ function! Checkout(...)
   else
     echo 'No branch selected.'
   endif
-execute 'redraw!'
 endfunction
 
 " Map the function to a command with variable arguments
