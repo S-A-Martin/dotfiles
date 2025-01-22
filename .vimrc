@@ -20,6 +20,7 @@ let mapleader = " "| " space as leader
 
 " === VISUAL SETTINGS ===
 
+set termguicolors
 colorscheme retrobox   " set colour scheme
 set background=dark   " use dark mode
 highlight Normal ctermbg=black   " set black background
