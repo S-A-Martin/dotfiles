@@ -21,7 +21,11 @@ let mapleader = " "| " space as leader
 " === VISUAL SETTINGS ===
 
 set termguicolors
-colorscheme retrobox   " set colour scheme
+try
+    colorscheme retrobox   " set colour scheme
+catch /^Vim\%((\a\+)\)\=:E185/
+    colorscheme slate   " fallback if retrobox is not available
+endtry
 set background=dark   " use dark mode
 highlight Normal ctermbg=black   " set black background
 highlight CursorLineNr ctermfg=214 ctermbg=NONE " colour the current line number
