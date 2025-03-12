@@ -8,7 +8,7 @@
 
 set nocompatible " use vim settings rather than vi settings
 filetype plugin indent on   " enable filetype detection, plugins and indentation
-syntax on   " syntax highlighting
+syntax enable   " syntax highlighting
 runtime macros/matchit.vim  " enable vim's built in bracket matching plugin
 
 
