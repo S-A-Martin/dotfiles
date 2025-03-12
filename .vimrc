@@ -20,7 +20,7 @@ let mapleader = " "| " space as leader
 
 " === VISUAL SETTINGS ===
 
-set termguicolors
+"set termguicolors " problems on MacOS with this
 try
     colorscheme retrobox   " set colour scheme
 catch
