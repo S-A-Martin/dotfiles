@@ -23,7 +23,7 @@ let mapleader = " "| " space as leader
 set termguicolors
 try
     colorscheme retrobox   " set colour scheme
-catch /^Vim\%((\a\+)\)\=:E185/
+catch
     colorscheme slate   " fallback if retrobox is not available
 endtry
 set background=dark   " use dark mode
