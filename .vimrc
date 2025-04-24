@@ -40,6 +40,7 @@ set laststatus=2  " always show the status line
 set splitbelow          " horizontal splits open below
 set splitright          " vertical 
 set showcmd 
+set novisualbell
 
 " === SEARCH SETTINGS === 
 
