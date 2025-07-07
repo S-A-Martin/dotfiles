@@ -6,6 +6,22 @@
 
 " === CORE SETTINGS === 
 
+if has('win32') || has('win64')
+    if executable('bash.exe')
+        set shell=C:\\Program\ Files\\Git\\bin\\bash.exe
+    elseif executable('wt.exe')
+        set shell=wt.exe
+        set shellpipe=|
+        set shellredir=>
+    endif
+else
+    " Linux/macOS config (as above)
+    if executable('bash')
+        set shell=/bin/bash
+    endif
+endif
+
+set belloff=all
 set nocompatible " use vim settings rather than vi settings
 filetype plugin indent on   " enable filetype detection, plugins and indentation
 syntax on   " syntax highlighting
@@ -34,6 +50,7 @@ set laststatus=2  " always show the status line
 set splitbelow          " horizontal splits open below
 set splitright          " vertical 
 set showcmd 
+set noshowmatch
 
 " === SEARCH SETTINGS === 
 
@@ -59,6 +76,7 @@ set wildmenu " enable the wild menu for tab completion
 set wildoptions=pum,fuzzy,tagfile
 set wildmode=longest:full,full
 set wildignore+=*node_modules*,*.ctags,.git/**,tags,cscope*
+set wildignore+=*/node_modules/*,*/.git/*,*.o,*.pyc
 
 
 " === TAGS CONFIGURATION ===
