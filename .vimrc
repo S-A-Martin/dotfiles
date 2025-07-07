@@ -24,7 +24,7 @@ endif
 set belloff=all
 set nocompatible " use vim settings rather than vi settings
 filetype plugin indent on   " enable filetype detection, plugins and indentation
-syntax on   " syntax highlighting
+syntax enable   " syntax highlighting
 runtime macros/matchit.vim  " enable vim's built in bracket matching plugin
 
 
@@ -36,12 +36,18 @@ let mapleader = " "| " space as leader
 
 " === VISUAL SETTINGS ===
 
-set termguicolors
-colorscheme retrobox   " set colour scheme
+try
+    colorscheme retrobox   " set colour scheme
+catch
+    colorscheme slate   " fallback if retrobox is not available
+endtry
+
 set background=dark   " use dark mode
-highlight Normal ctermbg=black   " set black background
-highlight CursorLineNr ctermfg=214 ctermbg=NONE " colour the current line number
-highlight CursorLine cterm=NONE ctermbg=233 " no background on the current line number
+
+" set termguicolors " problems on MacOS with this
+" highlight Normal ctermbg=black   " set black background
+" highlight CursorLineNr ctermfg=214 ctermbg=NONE " colour the current line number
+" highlight CursorLine cterm=NONE ctermbg=233 " no background on the current line number
 set cursorline  " show the current line number 
 set number relativenumber  " enable relative numbers
 set ruler " always show current line/char
@@ -51,6 +57,7 @@ set splitbelow          " horizontal splits open below
 set splitright          " vertical 
 set showcmd 
 set noshowmatch
+set novisualbell
 
 " === SEARCH SETTINGS === 
 
@@ -144,16 +151,6 @@ nnoremap <Leader>sv :source $MYVIMRC<CR>| " Reload vimr configuration file
 nnoremap <Leader>z :set spell<CR>| " enable spellcheck
 nnoremap <Leader>Z :set nospell<CR>| " disable spellcheck
 
-" Disable Arrow Keys In Normal Mode
-noremap <Left>  <nop>
-noremap <Down>  <nop>
-noremap <Up> 	<nop>
-noremap <Right> <nop>
-"inoremap <Left>  <nop>
-"inoremap <Down>  <nop>
-"inoremap <Up> 	 <nop>
-"inoremap <Right> <nop>
-
 " Quickfix Window Mappings
 nnoremap <Leader>k :copen<CR>| " open quickfix window
 nnoremap <Leader>j :cclose<CR>| " close quickfix window
@@ -187,6 +184,8 @@ function! Files()
         " Check if the selection is not empty
         if v:shell_error == 0 && !empty(l:selection)
             execute 'edit' l:selection
+        else
+            redraw!
         endif
     else
         echo "fzf is not installed. Please install fzf to use this command."
