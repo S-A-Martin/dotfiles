@@ -21,7 +21,6 @@ else
     endif
 endif
 
-set belloff=all
 set nocompatible " use vim settings rather than vi settings
 filetype plugin indent on   " enable filetype detection, plugins and indentation
 syntax enable   " syntax highlighting
@@ -58,6 +57,7 @@ set splitright          " vertical
 set showcmd 
 set noshowmatch
 set novisualbell
+set belloff=all
 
 " === SEARCH SETTINGS === 
 
