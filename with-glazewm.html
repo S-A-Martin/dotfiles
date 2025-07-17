@@ -1,0 +1,333 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Custom styles. -->
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, {
+        useState,
+        useEffect,
+      } from 'https://esm.sh/react@18?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18/client?dev';
+      import * as zebar from 'https://esm.sh/zebar@3.0';
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+
+      function App() {
+        const [coords, setCoords] = useState(null);
+        const [providers, setProviders] = useState(null);
+        const [output, setOutput] = useState(null);
+        const [customWeather, setCustomWeather] = useState(null);
+        const [weatherError, setWeatherError] = useState(null);
+        // Removed hardcoded weather state
+
+        // Get geolocation on mount
+        useEffect(() => {
+          if (!coords && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              pos => {
+                setCoords({
+                  latitude: pos.coords.latitude,
+                  longitude: pos.coords.longitude,
+                });
+              },
+              err => {
+                setCoords({});
+              }
+            );
+          } else if (!navigator.geolocation) {
+            setCoords({});
+          }
+        }, [coords]);
+
+        // Create providers when coords are available
+        useEffect(() => {
+          if (coords !== null) {
+            const weatherProvider = coords.latitude && coords.longitude
+              ? { type: 'weather', latitude: coords.latitude, longitude: coords.longitude }
+              : { type: 'weather' };
+            const p = zebar.createProviderGroup({
+              network: { type: 'network' },
+              glazewm: { type: 'glazewm' },
+              cpu: { type: 'cpu' },
+              date: { type: 'date', formatting: 'EEE d MMM HH:mm:ss' },
+              battery: { type: 'battery' },
+              memory: { type: 'memory' },
+              weather: weatherProvider,
+              disk: { type: 'disk' },
+            });
+            setProviders(p);
+            setOutput(p.outputMap);
+            p.onOutput(() => setOutput({ ...p.outputMap }));
+          }
+        }, [coords]);
+
+        // Fetch weather from Open-Meteo using real coordinates, refresh every 10 seconds
+        useEffect(() => {
+          let intervalId;
+          function fetchWeather() {
+            if (coords && coords.latitude && coords.longitude) {
+              const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.latitude}&longitude=${coords.longitude}&current_weather=true&temperature_unit=celsius`;
+              console.log('Open-Meteo API URL:', url);
+              fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                  if (data && data.current_weather && typeof data.current_weather.temperature === 'number') {
+                    setCustomWeather({
+                      temp: data.current_weather.temperature,
+                      code: data.current_weather.weathercode
+                    });
+                    setWeatherError(null);
+                  } else {
+                    setWeatherError('No weather data');
+                  }
+                })
+                .catch(() => setWeatherError('Weather fetch error'));
+            }
+          }
+          fetchWeather();
+          intervalId = setInterval(fetchWeather, 10000); // 10 seconds
+          return () => clearInterval(intervalId);
+        }, [coords]);
+
+        // Removed hardcoded weather effect
+
+        // Map Open-Meteo weather codes to Nerd Font icon classes
+        function getWeatherIconByCode(code) {
+          // See https://open-meteo.com/en/docs for weathercode meanings
+          if (code === undefined || code === null) return 'nf nf-weather-day_sunny';
+          if ([0].includes(code)) return 'nf nf-weather-day_sunny'; // Clear
+          if ([1, 2, 3].includes(code)) return 'nf nf-weather-day_cloudy'; // Mainly clear, partly cloudy, overcast
+          if ([45, 48].includes(code)) return 'nf nf-weather-fog'; // Fog
+          if ([51, 53, 55, 56, 57].includes(code)) return 'nf nf-weather-showers_scattered'; // Drizzle
+          if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return 'nf nf-weather-rain'; // Rain
+          if ([71, 73, 75, 77, 85, 86].includes(code)) return 'nf nf-weather-snow'; // Snow
+          if ([95, 96, 99].includes(code)) return 'nf nf-weather-storm_showers'; // Thunderstorm
+          return 'nf nf-weather-day_sunny';
+        }
+
+        if (!providers || !output) {
+          return <div className="app i3wm-style"><div className="right"><span>Loading...</span></div></div>;
+        }
+
+        // Get icon to show for current network status.
+        function getNetworkIcon(networkOutput) {
+          switch (networkOutput.defaultInterface?.type) {
+            case 'ethernet':
+              return <i className="nf nf-md-ethernet_cable"></i>;
+            case 'proprietary_virtual':
+              return <i className="nf nf-md-shield_lock_outline"></i>;
+            case 'wifi':
+              if (networkOutput.defaultGateway?.signalStrength >= 80) {
+                return <i className="nf nf-md-wifi_strength_4"></i>;
+              } else if (
+                networkOutput.defaultGateway?.signalStrength >= 65
+              ) {
+                return <i className="nf nf-md-wifi_strength_3"></i>;
+              } else if (
+                networkOutput.defaultGateway?.signalStrength >= 40
+              ) {
+                return <i className="nf nf-md-wifi_strength_2"></i>;
+              } else if (
+                networkOutput.defaultGateway?.signalStrength >= 25
+              ) {
+                return <i className="nf nf-md-wifi_strength_1"></i>;
+              } else {
+                return <i className="nf nf-md-wifi_strength_outline"></i>;
+              }
+            default:
+              return (
+                <i className="nf nf-md-wifi_strength_off_outline"></i>
+              );
+          }
+        }
+
+        // Get icon to show for how much of the battery is charged.
+        function getBatteryIcon(batteryOutput) {
+          if (batteryOutput.chargePercent > 90)
+            return <i className="nf nf-fa-battery_4"></i>;
+          if (batteryOutput.chargePercent > 70)
+            return <i className="nf nf-fa-battery_3"></i>;
+          if (batteryOutput.chargePercent > 40)
+            return <i className="nf nf-fa-battery_2"></i>;
+          if (batteryOutput.chargePercent > 20)
+            return <i className="nf nf-fa-battery_1"></i>;
+          return <i className="nf nf-fa-battery_0"></i>;
+        }
+
+        // Get icon to show for current weather status.
+        function getWeatherIcon(weatherOutput) {
+          switch (weatherOutput.status) {
+            case 'clear_day':
+              return <i className="nf nf-weather-day_sunny"></i>;
+            case 'clear_night':
+              return <i className="nf nf-weather-night_clear"></i>;
+            case 'cloudy_day':
+              return <i className="nf nf-weather-day_cloudy"></i>;
+            case 'cloudy_night':
+              return <i className="nf nf-weather-night_alt_cloudy"></i>;
+            case 'light_rain_day':
+              return <i className="nf nf-weather-day_sprinkle"></i>;
+            case 'light_rain_night':
+              return <i className="nf nf-weather-night_alt_sprinkle"></i>;
+            case 'heavy_rain_day':
+              return <i className="nf nf-weather-day_rain"></i>;
+            case 'heavy_rain_night':
+              return <i className="nf nf-weather-night_alt_rain"></i>;
+            case 'snow_day':
+              return <i className="nf nf-weather-day_snow"></i>;
+            case 'snow_night':
+              return <i className="nf nf-weather-night_alt_snow"></i>;
+            case 'thunder_day':
+              return <i className="nf nf-weather-day_lightning"></i>;
+            case 'thunder_night':
+              return <i className="nf nf-weather-night_alt_lightning"></i>;
+          }
+        }
+
+
+
+
+        return (
+          <div className="app i3wm-style">
+            <div className="left">
+              {output.glazewm && (
+                <div className="workspaces">
+                  {output.glazewm.currentWorkspaces.map(workspace => (
+                    <button
+                      className={`workspace ${workspace.hasFocus && 'focused'} ${workspace.isDisplayed && 'displayed'}`}
+                      onClick={() =>
+                        output.glazewm.runCommand(
+                          `focus --workspace ${workspace.name}`,
+                        )
+                      }
+                      key={workspace.name}
+                    >
+                      {workspace.displayName ?? workspace.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {output.glazewm && (
+                <>
+                  {output.glazewm.isPaused && (
+                    <button
+                      className="paused-button"
+                      onClick={() =>
+                        output.glazewm.runCommand('wm-toggle-pause')
+                      }
+                    >
+                      PAUSED
+                    </button>
+                  )}
+                  {output.glazewm.bindingModes.map(bindingMode => (
+                    <button
+                      className="binding-mode"
+                      key={bindingMode.name}
+                      onClick={() =>
+                        output.glazewm.runCommand(
+                          `wm-disable-binding-mode --name ${bindingMode.name}`,
+                        )
+                      }
+                    >
+                      {bindingMode.displayName ?? bindingMode.name}
+                    </button>
+                  ))}
+                </>
+              )}
+            </div>
+
+            <div className="right">
+              {output.network && (
+                <div className="status-item network">
+                  {getNetworkIcon(output.network)}
+                  <span>
+                    {output.network.defaultGateway?.ssid || 'No network'}
+                    {output.network.defaultInterface?.ipv4Addresses && output.network.defaultInterface.ipv4Addresses.length > 0
+                      ? ` [${output.network.defaultInterface.ipv4Addresses[0]}]`
+                      : ''}
+                  </span>
+                </div>
+              )}
+
+              {output.disk && (
+                <div className="status-item disk">
+                  <i className="nf nf-oct-database"></i>
+                  <span>
+                    {output.disk.disks && output.disk.disks.length > 0 && output.disk.disks[0].availableSpace
+                      ? `${output.disk.disks[0].availableSpace.iecValue.toFixed(1)} ${output.disk.disks[0].availableSpace.iecUnit}`
+                      : '? free'}
+                  </span>
+                </div>
+              )}
+
+              {output.cpu && (
+                <div className="status-item cpu">
+                  <i className="nf nf-oct-cpu"></i>
+                  <span className={output.cpu.usage > 85 ? 'high-usage' : ''}>
+                    {Math.round(output.cpu.usage)}%
+                  </span>
+                </div>
+              )}
+
+
+              {output.memory && (
+                <div className="status-item memory">
+                  <i className="nf nf-fae-chip"></i>
+                  <span>{Math.round(output.memory.usage)}%</span>
+                </div>
+              )}
+
+              {output.battery && (
+                <div className="status-item battery">
+                  {output.battery.isCharging && (
+                    <i className="nf nf-md-power_plug charging-icon"></i>
+                  )}
+                  {getBatteryIcon(output.battery)}
+                  <span>{Math.round(output.battery.chargePercent)}%</span>
+                </div>
+              )}
+
+              
+
+              {customWeather && !weatherError && (
+                <div className="status-item weather">
+                  <i className={getWeatherIconByCode(customWeather.code ?? 0)} style={{marginRight: 4}}></i>
+                  <span>{customWeather.temp.toFixed(1)}°C</span>
+                </div>
+              )}
+              {weatherError && (
+                <div className="status-item weather">
+                  <span>Weather error</span>
+                </div>
+              )}
+
+              {output.date && (
+                <div className="status-item date">
+                    {/* <i className="nf nf-fa-clock_o"></i> */}
+                  <span>{output.date.formatted}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>
