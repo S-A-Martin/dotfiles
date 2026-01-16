@@ -78,17 +78,27 @@ set smartindent
 
 " === FILE NAVIGATION AND COMPLETION ===
 
-set path+=** " allow recursive searching from the cwd
+" NOTE: `path+=**` enables recursive file completion/searching, but can be
+" extremely slow in large repos when combined with wildmenu completion.
+" Prefer using the `:Files` (fzf) command for deep searches.
+set path-=**
+set path+=.
+
 set wildmenu " enable the wild menu for tab completion
 set wildoptions=pum,fuzzy,tagfile
 set wildmode=longest:full,full
+
+" Keep wildcard completion snappy by limiting what it scans.
+" (These patterns affect cmdline completion, not `:Files`.)
 set wildignore+=*node_modules*,*.ctags,.git/**,tags,cscope*
-set wildignore+=*/node_modules/*,*/.git/*,*.o,*.pyc
+set wildignore+=*/node_modules/*,*/.git/*,*/build/*,*/build_ti/*,*.o,*.pyc
 
 
 " === TAGS CONFIGURATION ===
 
-set tags=./tags;,/tags;,~/.vim/system/tags
+" Search upward for tags files (walk parents until found).
+" `;` at the end is the key.
+set tags=./tags;,tags;,
 set notagrelative
 
 
@@ -137,7 +147,63 @@ tnoremap <leader>gt <C-\><C-n>gt| "previous tab in terminal
 
 " Search and Navigation Mappings
 noremap <leader>f :grep<Space>| " grep shortcut
-nnoremap <leader>F :Files<CR>| " open fzf filesearch
+function! s:fzf_open_on_exit(job, status) abort
+  " Restore the previous window/buffer first.
+  if exists('g:fzf_return_winid')
+    call win_gotoid(g:fzf_return_winid)
+    unlet g:fzf_return_winid
+  endif
+
+  if exists('g:fzf_return_bufnr')
+    execute 'buffer' g:fzf_return_bufnr
+    unlet g:fzf_return_bufnr
+  endif
+
+  if exists('g:fzf_selection_file') && filereadable(g:fzf_selection_file)
+    let l:out = readfile(g:fzf_selection_file)
+    call delete(g:fzf_selection_file)
+    unlet g:fzf_selection_file
+    if !empty(l:out)
+      execute 'edit' fnameescape(l:out[0])
+    endif
+  endif
+endfunction
+
+function! s:fzf_pick_file() abort
+  if !executable('fzf')
+    echo "fzf is not installed. Please install fzf to use this command."
+    return
+  endif
+
+  let g:fzf_selection_file = tempname()
+  let g:fzf_return_winid = win_getid()
+  let g:fzf_return_bufnr = bufnr('%')
+
+  " Full-screen terminal: use the current window.
+  execute 'enew'
+
+  let l:find_cmd = 'find . -type f -not -path "*/.git/*"'
+  let l:binds = '--bind="F2:toggle-preview,ctrl-j:down,ctrl-k:up,alt-j:preview-down,alt-k:preview-up"'
+
+  if executable('batcat')
+    let l:preview = '--preview="batcat --color always {}"'
+  elseif executable('bat')
+    let l:preview = '--preview="bat --color always {}"'
+  else
+    let l:preview = '--preview="cat {}"'
+  endif
+
+  let l:fzf_cmd = 'fzf --preview-window "hidden" ' . l:binds . ' ' . l:preview
+  let l:cmd = l:find_cmd . ' | ' . l:fzf_cmd . ' > ' . shellescape(g:fzf_selection_file)
+
+  call term_start([&shell, &shellcmdflag, l:cmd], {
+        \ 'curwin': 1,
+        \ 'term_finish': 'close',
+        \ 'exit_cb': function('s:fzf_open_on_exit'),
+        \ })
+endfunction
+
+nnoremap <leader>F :call <SID>fzf_pick_file()<CR>| " fzf then open selection
 nnoremap <leader>gc :Checkout<CR>| " fuzzy checkout branch
 
 " Quick Buffer Searching
@@ -199,7 +265,7 @@ function! Checkout(...)
   " Check the number of arguments
   if a:0 > 0
     " Use the first argument as the query
-    let branch = system('git branch | fzf -q ' . a:1)
+    let branch = system('git branch | fzf -q ' . shellescape(a:1))
   else
     let branch = system('git branch | fzf')
   endif
