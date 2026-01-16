@@ -43,7 +43,7 @@ endtry
 
 set background=dark   " use dark mode
 
-" set termguicolors " problems on MacOS with this
+set termguicolors " problems on MacOS with this
 " highlight Normal ctermbg=black   " set black background
 " highlight CursorLineNr ctermfg=214 ctermbg=NONE " colour the current line number
 " highlight CursorLine cterm=NONE ctermbg=233 " no background on the current line number
