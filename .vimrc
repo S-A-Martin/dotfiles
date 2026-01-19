@@ -306,3 +306,56 @@ endfunction
 autocmd VimEnter * call EnsureUndoDirExists()
 autocmd VimEnter * call EnsureSystemDirExists()
 
+
+
+function! s:GetNthMatchPos(line, regex, occ)
+  let pos = -1
+  let start = 0
+  for i in range(a:occ)
+    let pos = match(a:line, a:regex, start)
+    if pos == -1 | return -1 | endif
+
+    " Get the actual string that matched
+    let m_str = matchstr(a:line, a:regex, pos)
+
+    " Increment start. Use max([1, ...]) to ensure we always move 
+    " forward, even if the regex matches an empty string.
+    let start = pos + max([1, strlen(m_str)])
+  endfor
+  return pos
+endfunction
+
+function! AlignOn(...) range
+  " Argument Parsing:
+  " If there are at least 2 arguments and the first is purely digits,
+  " then: Arg 1 = Occurrence, Arg 2 = Regex
+  " Otherwise: Arg 1 = Regex, Occurrence = v:count1 (from prefix)
+  if a:0 >= 2 && a:1 =~ '^\d\+$'
+    let occ = str2nr(a:1)
+    let regex = a:2
+  else
+    let regex = a:1
+    let occ = v:count1
+  endif
+
+  " Pass 1: Find the furthest right position of the Nth match
+  let max_pos = 0
+  for lnum in range(a:firstline, a:lastline)
+    let pos = s:GetNthMatchPos(getline(lnum), regex, occ)
+    if pos != -1 && pos > max_pos
+      let max_pos = pos
+    endif
+  endfor
+
+  " Pass 2: Apply padding
+  for lnum in range(a:firstline, a:lastline)
+    let line = getline(lnum)
+    let pos = s:GetNthMatchPos(line, regex, occ)
+    if pos != -1
+      let pad = repeat(' ', max_pos - pos)
+      call setline(lnum, strpart(line, 0, pos) . pad . strpart(line, pos))
+    endif
+  endfor
+endfunction
+" The -nargs=+ allows you to pass multiple space-separated arguments
+command! -range -nargs=+ AlignOn <line1>,<line2>call AlignOn(<f-args>)
