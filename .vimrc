@@ -94,13 +94,28 @@ set wildignore+=*node_modules*,*.ctags,.git/**,tags,cscope*
 set wildignore+=*/node_modules/*,*/.git/*,*/build/*,*/build_ti/*,*.o,*.pyc
 
 
-" === TAGS CONFIGURATION ===
+" SYSTEM TAGS CONFIG ---
+let g:sys_tags_path = expand('~/.vim/tags/sys.tags')
 
-" Search upward for tags files (walk parents until found).
-" `;` at the end is the key.
-set tags=./tags;,tags;,
+" 1. Search Priority: Local File -> Project Root -> System
+" The semicolon (;) enables upward searching for local 'tags' files
+set tags=./tags;,tags;
+
+" 2. Append system tags if the file was generated in the terminal
+if filereadable(g:sys_tags_path)
+      execute 'set tags+=' . g:sys_tags_path
+endif
+
+" 3. Keep the command for future updates (with corrected flags)
+if executable('ctags')
+      " The added 'execute' at the end refreshes the &tags variable in your current session
+    command! GenerateSystemTags execute '!ctags -R -f ' . shellescape(g:sys_tags_path) . ' /usr/include /usr/local/include /usr/src/linux-headers-$(uname -r)/include'
+              \ | let &tags = "./tags;,tags;," . g:sys_tags_path
+              \ | redraw!
+              \ | echo "System tags generated and loaded!"
+endif
+
 set notagrelative
-
 
 " === HISTORY AND UNDO SETTINGS ===
 
