@@ -36,6 +36,3 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # opencode
 export PATH=/c/Users/smartin/.opencode/bin:$PATH
-
-export OPENCODE_DISABLE_PRUNE
-export OPENCODE_DISABLE_AUTOCOMPACT
