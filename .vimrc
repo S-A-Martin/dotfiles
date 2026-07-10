@@ -160,6 +160,9 @@ noremap <Leader>TT :tab terminal ++kill=hup<CR>| " open terminal in new tab
 tnoremap <leader>gT <C-\><C-n>gT| "next tab in terminal
 tnoremap <leader>gt <C-\><C-n>gt| "previous tab in terminal
 
+" Visual mode Git Blame for highlighted Range
+vnoremap <leader>b :<C-u>echo system('git blame -L ' . line("'<") . ',' . line("'>") . ' ' . expand('%'))<CR>
+
 " Search and Navigation Mappings
 noremap <leader>f :grep<Space>| " grep shortcut
 function! s:fzf_open_on_exit(job, status) abort
