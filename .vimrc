@@ -3,6 +3,9 @@
 " Author: Steven Martin
 " ========================================
 
+hi link markdownError none
+set listchars=tab:»\ ,space:·,trail:·,eol:$,extends:>,precedes:<
+" :e ++ff=unix to see Windows line endings
 
 " === CORE SETTINGS === 
 
